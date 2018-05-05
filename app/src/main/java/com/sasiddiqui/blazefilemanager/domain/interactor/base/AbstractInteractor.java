@@ -44,6 +44,7 @@ public abstract class AbstractInteractor implements Interactor {
 
     public void cancel() {
         this.mIsCancelled = true;
+        this.mStillRunning = false;
     }
 
     @Override
