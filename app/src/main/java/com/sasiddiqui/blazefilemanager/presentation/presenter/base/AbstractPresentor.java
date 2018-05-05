@@ -9,8 +9,8 @@ import com.sasiddiqui.blazefilemanager.domain.executor.MainThread;
 
 public abstract class AbstractPresentor {
 
-    private Executor mExecutor;
-    private MainThread mMainThread;
+    protected Executor mExecutor;
+    protected MainThread mMainThread;
 
     public AbstractPresentor(Executor mExecutor, MainThread mMainThread) {
         this.mExecutor = mExecutor;

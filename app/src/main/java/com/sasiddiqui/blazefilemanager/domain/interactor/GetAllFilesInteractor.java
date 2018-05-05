@@ -17,7 +17,7 @@ public interface GetAllFilesInteractor extends Interactor {
         /**
          * This callback is to notify the listener with a list of files and folders list.
          */
-        void onFilesDirRetrieved(List<FileDir> fileDirList);
+        void onContentRetrieved(List<FileDir> fileDirList);
 
         /**
          * This callback is used to notify the listener about an error occurred while retrieving.

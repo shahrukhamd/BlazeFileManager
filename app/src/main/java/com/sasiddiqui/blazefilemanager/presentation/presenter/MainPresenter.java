@@ -10,7 +10,7 @@ import java.util.List;
  * Created by shahrukhamd on 01/05/18.
  */
 
-public interface DirectoryContentPresenter extends BasePresenter {
+public interface MainPresenter extends BasePresenter {
 
     interface View extends BaseView {
         /**

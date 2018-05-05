@@ -37,7 +37,13 @@ public class GetAllFilesInteractorImpl extends AbstractInteractor implements Get
 
     @Override
     public void run() {
-        List<FileDir> contentList = mSystemRepository.getDirectoryContent(path);
+        final List<FileDir> contentList = mSystemRepository.getDirectoryContent(path);
 
+        mMainThread.post(new Runnable() {
+            @Override
+            public void run() {
+                mCallback.onContentRetrieved(contentList);
+            }
+        });
     }
 }

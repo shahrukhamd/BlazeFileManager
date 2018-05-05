@@ -51,5 +51,6 @@ public abstract class AbstractInteractor implements Interactor {
     public void execute() {
         this.mStillRunning = true;
 
+        mExecutor.execute(this);
     }
 }
