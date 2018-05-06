@@ -1,7 +1,18 @@
 <resources>
+    <!--Common-->
     <string name="app_name">BlazeFileManager</string>
+
     <string name="dummy_text_full">Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform grammatica, pronunciation e plu commun paroles.</string>
     <string name="dummy_text_small">Li Europan lingues es membres</string>
 
+    <string name="text_ok">Ok</string>
+    <string name="text_cancel">Cancel</string>
+    <!--Common-->
+
     <string name="message_empty_directory">Nothing but emptiness here</string>
+
+    <!--Permission rationale messages-->
+    <string name="message_rationale_read_storage" formatted="false"><b>Read storage</b> permission is needed only to query the content of the storage of this device.\n\nYou can always change the permissions in <b>app settings</b>.</string>
+    <string name="message_rationale_write_storage" formatted="false"><b>Write storage</b> permission is needed only to perform your desired operations on files and folders.\n\nYou can always change the permissions in <b>app settings</b>.</string>
+    <!--Permission rationale messages-->
 </resources>

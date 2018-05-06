@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,7 +25,6 @@ import com.sasiddiqui.blazefilemanager.presentation.ui.adapter.FileFolderListRVA
 import com.sasiddiqui.blazefilemanager.storage.SystemRepositoryImpl;
 import com.sasiddiqui.blazefilemanager.threading.MainThreadImpl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
@@ -99,7 +99,6 @@ public class MainActivity extends AppCompatActivity implements
     public void permissionRequestAccepted(int requestCode) {
         switch (requestCode) {
             case PermissionActionHelper.ACTION_GET_READ_STORAGE_PERMISSION:
-                Toast.makeText(this, "Read storage perm granted", Toast.LENGTH_SHORT).show();
                 mainPresenter.getDirectoryContent(foldersStack.peek());
                 break;
 
@@ -117,10 +116,11 @@ public class MainActivity extends AppCompatActivity implements
     public void permissionRequestDenied(int requestCode) {
         switch (requestCode) {
             case PermissionActionHelper.ACTION_GET_READ_STORAGE_PERMISSION:
-                Toast.makeText(this, "Read storage perm denied", Toast.LENGTH_SHORT).show();
+                showRationaleDialog(R.string.message_rationale_read_storage);
                 break;
 
             case PermissionActionHelper.ACTION_GET_WRITE_STORAGE_PERMISSION:
+                showRationaleDialog(R.string.message_rationale_write_storage);
                 break;
         }
     }
@@ -129,11 +129,11 @@ public class MainActivity extends AppCompatActivity implements
     public void showRationale(int requestCode) {
         switch (requestCode) {
             case PermissionActionHelper.ACTION_GET_READ_STORAGE_PERMISSION:
-                //TODO Rationale dialog implementation
-                Toast.makeText(this, "Read storage perm rationale", Toast.LENGTH_SHORT).show();
+                showRationaleDialog(R.string.message_rationale_read_storage);
                 break;
 
             case PermissionActionHelper.ACTION_GET_WRITE_STORAGE_PERMISSION:
+                showRationaleDialog(R.string.message_rationale_write_storage);
                 break;
         }
     }
@@ -141,5 +141,12 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onDirectoryContentRetrieved(List<FileDir> fileDirList) {
         adapter.updateList(fileDirList);
+    }
+
+    private void showRationaleDialog(int messageId) {
+        new AlertDialog.Builder(this)
+                .setMessage(messageId)
+                .setPositiveButton(R.string.text_ok, null)
+                .show();
     }
 }
