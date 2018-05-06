@@ -2,4 +2,6 @@
     <string name="app_name">BlazeFileManager</string>
     <string name="dummy_text_full">Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform grammatica, pronunciation e plu commun paroles.</string>
     <string name="dummy_text_small">Li Europan lingues es membres</string>
+
+    <string name="message_empty_directory">Nothing but emptiness here</string>
 </resources>

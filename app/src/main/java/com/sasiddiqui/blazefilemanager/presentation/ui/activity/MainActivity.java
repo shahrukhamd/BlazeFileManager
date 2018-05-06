@@ -5,6 +5,9 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sasiddiqui.blazefilemanager.R;
@@ -17,11 +20,16 @@ import com.sasiddiqui.blazefilemanager.presentation.presenter.MainPresenter;
 import com.sasiddiqui.blazefilemanager.presentation.presenter.PermissionPresenter;
 import com.sasiddiqui.blazefilemanager.presentation.presenter.implementation.MainPresenterImpl;
 import com.sasiddiqui.blazefilemanager.presentation.presenter.implementation.PermissionPresenterImpl;
+import com.sasiddiqui.blazefilemanager.presentation.ui.adapter.FileFolderListRVAdapter;
 import com.sasiddiqui.blazefilemanager.storage.SystemRepositoryImpl;
 import com.sasiddiqui.blazefilemanager.threading.MainThreadImpl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by shahrukhamd on 04/05/18.
@@ -31,21 +39,37 @@ public class MainActivity extends AppCompatActivity implements
     PermissionPresenter.View,
     MainPresenter.View {
 
-    private PermissionPresenter mPermissionPresenter;
+    private PermissionPresenter permissionPresenter;
     private MainPresenter mainPresenter;
+    private FileFolderListRVAdapter adapter;
+
     private Stack<String> foldersStack;
+
+    @BindView(R.id.main_content_recycler_view) RecyclerView contentRecyclerView;
+    @BindView(R.id.main_help_text) TextView emptyScreenTextView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
+        init();
+    }
+
+    private void init() {
         foldersStack = new Stack<>();
-        foldersStack.push(Environment.getExternalStorageDirectory().toString());
+        foldersStack.push(Environment.getExternalStorageDirectory().toString());    // Set the home directory
+
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        adapter = new FileFolderListRVAdapter(null);
+
+        contentRecyclerView.setLayoutManager(layoutManager);
+        contentRecyclerView.setAdapter(adapter);
 
         PermissionAction permissionAction = new PermissionActionImpl(this);
 
-        mPermissionPresenter = new PermissionPresenterImpl(permissionAction, this);
+        permissionPresenter = new PermissionPresenterImpl(permissionAction, this);
         mainPresenter = new MainPresenterImpl(
                 ExecutorImpl.getInstance(),
                 MainThreadImpl.getInstance(),
@@ -53,12 +77,12 @@ public class MainActivity extends AppCompatActivity implements
                 new SystemRepositoryImpl()
         );
 
-        mPermissionPresenter.checkAndRequestPermission(PermissionActionHelper.PERM_HELPER_READ_STORAGE);
+        permissionPresenter.checkAndRequestPermission(PermissionActionHelper.PERM_HELPER_READ_STORAGE);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        mPermissionPresenter.checkPermission(requestCode, grantResults);
+        permissionPresenter.checkPermission(requestCode, grantResults);
     }
 
     @Override
@@ -105,6 +129,7 @@ public class MainActivity extends AppCompatActivity implements
     public void showRationale(int requestCode) {
         switch (requestCode) {
             case PermissionActionHelper.ACTION_GET_READ_STORAGE_PERMISSION:
+                //TODO Rationale dialog implementation
                 Toast.makeText(this, "Read storage perm rationale", Toast.LENGTH_SHORT).show();
                 break;
 
@@ -115,6 +140,6 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onDirectoryContentRetrieved(List<FileDir> fileDirList) {
-
+        adapter.updateList(fileDirList);
     }
 }
