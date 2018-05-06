@@ -50,6 +50,11 @@ public class FileDir implements Comparable<FileDir> {
 
     @Override
     public int compareTo(@NonNull FileDir o) {
-        return mName.compareTo(o.getName());
+        // This will compare the same item type only. If they are different, the folder will take precedence in list.
+        if (mType == o.getType()) {
+            return mName.compareTo(o.getName());
+        } else {
+            return TYPE_FILE;
+        }
     }
 }

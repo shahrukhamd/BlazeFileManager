@@ -8,6 +8,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,7 +27,6 @@ import com.sasiddiqui.blazefilemanager.storage.SystemRepositoryImpl;
 import com.sasiddiqui.blazefilemanager.threading.MainThreadImpl;
 
 import java.util.List;
-import java.util.Stack;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -43,8 +43,6 @@ public class MainActivity extends AppCompatActivity implements
     private MainPresenter mainPresenter;
     private FileFolderListRVAdapter adapter;
 
-    private Stack<String> foldersStack;
-
     @BindView(R.id.main_content_recycler_view) RecyclerView contentRecyclerView;
     @BindView(R.id.main_help_text) TextView emptyScreenTextView;
 
@@ -58,15 +56,6 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void init() {
-        foldersStack = new Stack<>();
-        foldersStack.push(Environment.getExternalStorageDirectory().toString());    // Set the home directory
-
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        adapter = new FileFolderListRVAdapter(null);
-
-        contentRecyclerView.setLayoutManager(layoutManager);
-        contentRecyclerView.setAdapter(adapter);
-
         PermissionAction permissionAction = new PermissionActionImpl(this);
 
         permissionPresenter = new PermissionPresenterImpl(permissionAction, this);
@@ -76,6 +65,12 @@ public class MainActivity extends AppCompatActivity implements
                 this,
                 new SystemRepositoryImpl()
         );
+
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        adapter = new FileFolderListRVAdapter(null, mainPresenter);
+
+        contentRecyclerView.setLayoutManager(layoutManager);
+        contentRecyclerView.setAdapter(adapter);
 
         permissionPresenter.checkAndRequestPermission(PermissionActionHelper.PERM_HELPER_READ_STORAGE);
     }
@@ -98,8 +93,11 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void permissionRequestAccepted(int requestCode) {
         switch (requestCode) {
+
             case PermissionActionHelper.ACTION_GET_READ_STORAGE_PERMISSION:
-                mainPresenter.getDirectoryContent(foldersStack.peek());
+
+                String homeDirectory = Environment.getExternalStorageDirectory().toString();
+                mainPresenter.getDirectoryContent(homeDirectory);
                 break;
 
             case PermissionActionHelper.ACTION_GET_WRITE_STORAGE_PERMISSION:
@@ -109,14 +107,16 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onError(String message) {
-
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void permissionRequestDenied(int requestCode) {
         switch (requestCode) {
+
             case PermissionActionHelper.ACTION_GET_READ_STORAGE_PERMISSION:
                 showRationaleDialog(R.string.message_rationale_read_storage);
+                onContentRetrievalFailedOrEmpty();
                 break;
 
             case PermissionActionHelper.ACTION_GET_WRITE_STORAGE_PERMISSION:
@@ -128,6 +128,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void showRationale(int requestCode) {
         switch (requestCode) {
+
             case PermissionActionHelper.ACTION_GET_READ_STORAGE_PERMISSION:
                 showRationaleDialog(R.string.message_rationale_read_storage);
                 break;
@@ -140,7 +141,16 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onDirectoryContentRetrieved(List<FileDir> fileDirList) {
+        emptyScreenTextView.setVisibility(View.GONE);
+        contentRecyclerView.setVisibility(View.VISIBLE);
+
         adapter.updateList(fileDirList);
+    }
+
+    @Override
+    public void onContentRetrievalFailedOrEmpty() {
+        emptyScreenTextView.setVisibility(View.VISIBLE);
+        contentRecyclerView.setVisibility(View.GONE);
     }
 
     private void showRationaleDialog(int messageId) {
@@ -148,5 +158,10 @@ public class MainActivity extends AppCompatActivity implements
                 .setMessage(messageId)
                 .setPositiveButton(R.string.text_ok, null)
                 .show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!mainPresenter.goToPreviousDirectory()) super.onBackPressed();
     }
 }
