@@ -25,6 +25,7 @@ import com.sasiddiqui.blazefilemanager.presentation.presenter.implementation.Per
 import com.sasiddiqui.blazefilemanager.presentation.ui.adapter.FileFolderListRVAdapter;
 import com.sasiddiqui.blazefilemanager.storage.SystemRepositoryImpl;
 import com.sasiddiqui.blazefilemanager.threading.MainThreadImpl;
+import com.sasiddiqui.blazefilemanager.util.FileUtils;
 
 import java.util.List;
 
@@ -113,14 +114,11 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void permissionRequestDenied(int requestCode) {
         switch (requestCode) {
-
+            // Android system treats read and write permission the same in permissions management.
             case PermissionActionHelper.ACTION_GET_READ_STORAGE_PERMISSION:
+            case PermissionActionHelper.ACTION_GET_WRITE_STORAGE_PERMISSION:
                 showRationaleDialog(R.string.message_rationale_read_storage);
                 onContentRetrievalFailedOrEmpty();
-                break;
-
-            case PermissionActionHelper.ACTION_GET_WRITE_STORAGE_PERMISSION:
-                showRationaleDialog(R.string.message_rationale_write_storage);
                 break;
         }
     }
@@ -128,13 +126,11 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void showRationale(int requestCode) {
         switch (requestCode) {
-
+            // Android system treats read and write permission the same in permissions management.
             case PermissionActionHelper.ACTION_GET_READ_STORAGE_PERMISSION:
-                showRationaleDialog(R.string.message_rationale_read_storage);
-                break;
-
             case PermissionActionHelper.ACTION_GET_WRITE_STORAGE_PERMISSION:
-                showRationaleDialog(R.string.message_rationale_write_storage);
+                showRationaleDialog(R.string.message_rationale_read_storage);
+                onContentRetrievalFailedOrEmpty();
                 break;
         }
     }
@@ -151,6 +147,11 @@ public class MainActivity extends AppCompatActivity implements
     public void onContentRetrievalFailedOrEmpty() {
         emptyScreenTextView.setVisibility(View.VISIBLE);
         contentRecyclerView.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void openFile(FileDir fileDir) {
+        FileUtils.openFile(this, fileDir);
     }
 
     private void showRationaleDialog(int messageId) {

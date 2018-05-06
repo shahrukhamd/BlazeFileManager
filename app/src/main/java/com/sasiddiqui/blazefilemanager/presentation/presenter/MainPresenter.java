@@ -24,6 +24,13 @@ public interface MainPresenter extends BasePresenter {
          * This method will be called when there was some error retrieving the content or it's empty.
          */
         void onContentRetrievalFailedOrEmpty();
+
+        /**
+         * This method should be used to open a file with appropriate activity.
+         *
+         * @param fileDir The file to open.
+         */
+        void openFile(FileDir fileDir);
     }
 
     /**

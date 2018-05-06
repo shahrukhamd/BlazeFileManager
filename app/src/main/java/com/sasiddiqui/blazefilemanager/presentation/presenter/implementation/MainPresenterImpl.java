@@ -73,7 +73,8 @@ public class MainPresenterImpl extends AbstractPresentor implements
 
     @Override
     public void onClickContentListItem(@NonNull FileDir fileDir) {
-        getDirectoryContent(fileDir.getPath());
+        if (fileDir.getType() == FileDir.TYPE_FOLDER) getDirectoryContent(fileDir.getPath());
+        else callback.openFile(fileDir);
     }
 
     @Override

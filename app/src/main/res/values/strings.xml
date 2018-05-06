@@ -10,9 +10,10 @@
     <!--Common-->
 
     <string name="message_empty_directory">Nothing but emptiness here</string>
+    <string name="message_file_handler_not_found">No handler for this type of file</string>
+    <string name="message_some_error">Some error occurred</string>
 
     <!--Permission rationale messages-->
-    <string name="message_rationale_read_storage" formatted="false"><b>Read storage</b> permission is needed only to query the content of the storage of this device.\n\nYou can always change the permissions in <b>app settings</b>.</string>
-    <string name="message_rationale_write_storage" formatted="false"><b>Write storage</b> permission is needed only to perform your desired operations on files and folders.\n\nYou can always change the permissions in <b>app settings</b>.</string>
+    <string name="message_rationale_read_storage" formatted="false"><b>Manage storage</b> permission is needed only to query the content of the storage of this device.\n\nYou can always change the permissions in <b>app settings</b>.</string>
     <!--Permission rationale messages-->
 </resources>
