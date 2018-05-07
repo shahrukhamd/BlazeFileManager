@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.sasiddiqui.blazefilemanager.domain.model.FileDir;
 import com.sasiddiqui.blazefilemanager.presentation.presenter.base.BasePresenter;
+import com.sasiddiqui.blazefilemanager.presentation.presenter.model.MainPresenterData;
 import com.sasiddiqui.blazefilemanager.presentation.ui.BaseView;
 
 import java.util.List;
@@ -53,4 +54,6 @@ public interface MainPresenter extends BasePresenter {
      * @return If or not a parent directory is available.
      */
     boolean goToPreviousDirectory();
+
+    MainPresenterData getStateData();
 }

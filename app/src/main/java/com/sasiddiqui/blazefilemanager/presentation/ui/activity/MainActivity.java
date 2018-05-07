@@ -22,6 +22,7 @@ import com.sasiddiqui.blazefilemanager.presentation.presenter.MainPresenter;
 import com.sasiddiqui.blazefilemanager.presentation.presenter.PermissionPresenter;
 import com.sasiddiqui.blazefilemanager.presentation.presenter.implementation.MainPresenterImpl;
 import com.sasiddiqui.blazefilemanager.presentation.presenter.implementation.PermissionPresenterImpl;
+import com.sasiddiqui.blazefilemanager.presentation.presenter.model.MainPresenterData;
 import com.sasiddiqui.blazefilemanager.presentation.ui.adapter.FileFolderListRVAdapter;
 import com.sasiddiqui.blazefilemanager.storage.SystemRepositoryImpl;
 import com.sasiddiqui.blazefilemanager.threading.MainThreadImpl;
@@ -53,18 +54,24 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        init();
+        init(savedInstanceState);
     }
 
-    private void init() {
+    private void init(Bundle savedInstanceState) {
         PermissionAction permissionAction = new PermissionActionImpl(this);
+
+        MainPresenterData savedData = null;
+        if (savedInstanceState != null) {   // Get the saved presenter data if available
+            savedData = (MainPresenterData) savedInstanceState.getSerializable(MainPresenterData.TAG);
+        }
 
         permissionPresenter = new PermissionPresenterImpl(permissionAction, this);
         mainPresenter = new MainPresenterImpl(
                 ExecutorImpl.getInstance(),
                 MainThreadImpl.getInstance(),
                 this,
-                new SystemRepositoryImpl()
+                new SystemRepositoryImpl(),
+                savedData
         );
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
@@ -74,6 +81,12 @@ public class MainActivity extends AppCompatActivity implements
         contentRecyclerView.setAdapter(adapter);
 
         permissionPresenter.checkAndRequestPermission(PermissionActionHelper.PERM_HELPER_READ_STORAGE);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putSerializable(MainPresenterData.TAG, mainPresenter.getStateData());
+        super.onSaveInstanceState(outState);
     }
 
     @Override

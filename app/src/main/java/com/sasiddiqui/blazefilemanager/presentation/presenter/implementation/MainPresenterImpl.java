@@ -1,6 +1,5 @@
 package com.sasiddiqui.blazefilemanager.presentation.presenter.implementation;
 
-import android.os.Environment;
 import android.support.annotation.NonNull;
 
 import com.sasiddiqui.blazefilemanager.domain.executor.Executor;
@@ -10,7 +9,8 @@ import com.sasiddiqui.blazefilemanager.domain.interactor.implementation.GetAllFi
 import com.sasiddiqui.blazefilemanager.domain.model.FileDir;
 import com.sasiddiqui.blazefilemanager.domain.repository.SystemRepository;
 import com.sasiddiqui.blazefilemanager.presentation.presenter.MainPresenter;
-import com.sasiddiqui.blazefilemanager.presentation.presenter.base.AbstractPresentor;
+import com.sasiddiqui.blazefilemanager.presentation.presenter.base.AbstractPresenter;
+import com.sasiddiqui.blazefilemanager.presentation.presenter.model.MainPresenterData;
 
 import java.util.List;
 import java.util.Stack;
@@ -19,7 +19,7 @@ import java.util.Stack;
  * Created by shahrukhamd on 01/05/18.
  */
 
-public class MainPresenterImpl extends AbstractPresentor implements
+public class MainPresenterImpl extends AbstractPresenter implements
         MainPresenter,
         GetAllFilesInteractor.Callback {
 
@@ -30,13 +30,18 @@ public class MainPresenterImpl extends AbstractPresentor implements
     private String currentPath;
 
     public MainPresenterImpl(Executor mExecutor, MainThread mMainThread, MainPresenter.View callback,
-                             SystemRepository systemRepository) {
+                             SystemRepository systemRepository, MainPresenterData savedData) {
         super(mExecutor, mMainThread);
 
         this.callback = callback;
         this.systemRepository = systemRepository;
 
-        directoryStack = new Stack<>();
+        if (savedData == null) {
+            directoryStack = new Stack<>();
+        } else {
+            directoryStack = savedData.getDirectoryStack();
+            currentPath = savedData.getCurrentPath();
+        }
     }
 
     @Override
@@ -97,5 +102,12 @@ public class MainPresenterImpl extends AbstractPresentor implements
     @Override
     public void onRetrievalError(String errorMessage) {
 
+    }
+
+    @Override
+    public MainPresenterData getStateData() {
+        return new MainPresenterData()
+                .setDirectoryStack(directoryStack)
+                .setCurrentPath(currentPath);
     }
 }
