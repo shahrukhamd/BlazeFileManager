@@ -35,11 +35,9 @@ public interface MainPresenter extends BasePresenter {
     }
 
     /**
-     * This method get the content of the directory respective of the given path through the {@link View}.
-     *
-     * @param path The path to the directory.
+     * This method get the content of the appropriate directory.
      */
-    void getDirectoryContent(String path);
+    void getDirectoryContent();
 
     /**
      * This method will be called when an item has been clicked in a content list.

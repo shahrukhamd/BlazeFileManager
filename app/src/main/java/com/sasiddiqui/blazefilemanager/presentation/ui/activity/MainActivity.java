@@ -61,6 +61,8 @@ public class MainActivity extends AppCompatActivity implements
         PermissionAction permissionAction = new PermissionActionImpl(this);
 
         MainPresenterData savedData = null;
+        String homeDirectory = Environment.getExternalStorageDirectory().toString();
+
         if (savedInstanceState != null) {   // Get the saved presenter data if available
             savedData = (MainPresenterData) savedInstanceState.getSerializable(MainPresenterData.TAG);
         }
@@ -71,7 +73,8 @@ public class MainActivity extends AppCompatActivity implements
                 MainThreadImpl.getInstance(),
                 this,
                 new SystemRepositoryImpl(),
-                savedData
+                savedData,
+                homeDirectory
         );
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
@@ -109,9 +112,7 @@ public class MainActivity extends AppCompatActivity implements
         switch (requestCode) {
 
             case PermissionActionHelper.ACTION_GET_READ_STORAGE_PERMISSION:
-
-                String homeDirectory = Environment.getExternalStorageDirectory().toString();
-                mainPresenter.getDirectoryContent(homeDirectory);
+                mainPresenter.getDirectoryContent();
                 break;
 
             case PermissionActionHelper.ACTION_GET_WRITE_STORAGE_PERMISSION:

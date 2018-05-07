@@ -30,7 +30,7 @@ public class MainPresenterImpl extends AbstractPresenter implements
     private String currentPath;
 
     public MainPresenterImpl(Executor mExecutor, MainThread mMainThread, MainPresenter.View callback,
-                             SystemRepository systemRepository, MainPresenterData savedData) {
+                             SystemRepository systemRepository, MainPresenterData savedData, String homeDirectory) {
         super(mExecutor, mMainThread);
 
         this.callback = callback;
@@ -38,6 +38,7 @@ public class MainPresenterImpl extends AbstractPresenter implements
 
         if (savedData == null) {
             directoryStack = new Stack<>();
+            currentPath = homeDirectory;
         } else {
             directoryStack = savedData.getDirectoryStack();
             currentPath = savedData.getCurrentPath();
@@ -60,17 +61,13 @@ public class MainPresenterImpl extends AbstractPresenter implements
     public void onError(String message) {}
 
     @Override
-    public void getDirectoryContent(String path) {
-        // Save the current directory in stack so that we can come back to it should a user wants to.
-        if (currentPath != null) directoryStack.push(currentPath);
-        currentPath = path;
-
+    public void getDirectoryContent() {
         GetAllFilesInteractor filesInteractor = new GetAllFilesInteractorImpl(
                 mExecutor,
                 mMainThread,
                 this,
                 systemRepository,
-                path
+                currentPath
         );
 
         filesInteractor.execute();
@@ -78,8 +75,16 @@ public class MainPresenterImpl extends AbstractPresenter implements
 
     @Override
     public void onClickContentListItem(@NonNull FileDir fileDir) {
-        if (fileDir.getType() == FileDir.TYPE_FOLDER) getDirectoryContent(fileDir.getPath());
-        else callback.openFile(fileDir);
+        if (fileDir.getType() == FileDir.TYPE_FOLDER) {
+            String filePath = fileDir.getPath();
+            directoryStack.push(currentPath);
+            currentPath = filePath;
+
+            getDirectoryContent();
+
+        } else {
+            callback.openFile(fileDir);
+        }
     }
 
     @Override
@@ -93,8 +98,8 @@ public class MainPresenterImpl extends AbstractPresenter implements
         if (directoryStack.empty()) {
             return false;
         } else {
-            currentPath = null; // Setting it null will prevent a loop
-            getDirectoryContent(directoryStack.pop());
+            currentPath = directoryStack.pop();
+            getDirectoryContent();
             return true;
         }
     }
